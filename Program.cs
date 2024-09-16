@@ -1,4 +1,5 @@
 using FirstDotNetCoreAPI.DTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -22,7 +23,8 @@ app.MapGet("/games", () =>
 // GET /games/1
 app.MapGet("/games/{id}", (int id) =>
 {
-    return games.Find(game => game.Id == id);
+    GameDto? game = games.Find(game => game.Id == id);
+    return game is null ? Results.NotFound() : Results.Ok(game);
 });
 
 // POST /games
@@ -43,6 +45,12 @@ app.MapPost("/games", (CreateGameDto newGameData) =>
 app.MapPut("/games/{id}", (int id, UpdateGameDto updatedGame) =>
 {
     var index = games.FindIndex(game => game.Id == id);
+
+    if (index == -1)
+    {
+        return Results.NotFound();
+    }
+
     games[index] = new GameDto(
         id,
         updatedGame.Name,
@@ -57,6 +65,13 @@ app.MapPut("/games/{id}", (int id, UpdateGameDto updatedGame) =>
 app.MapDelete("/games/{id}", (int id) =>
 {
     var index = games.FindIndex(game => game.Id == id);
+    if (index == -1)
+    {
+        return Results.NotFound();
+    }
+
     games.Remove(games[index]);
+    return Results.NoContent();
 });
+
 app.Run();
