@@ -1,0 +1,30 @@
+### Get All Games
+GET http://localhost:5101/games
+
+### Get Game based on ID
+GET http://localhost:5101/games/1
+
+### Create a new Game
+POST http://localhost:5101/games
+Content-Type: application/json
+
+{
+    "name":"Moto GP 24",
+    "genre":"Sports",
+    "price": 49.99,
+    "releaseDate":"2024-11-18"
+}
+
+### Update a game
+PUT http://localhost:5101/games/1
+Content-Type: application/json
+
+{
+    "name":"Cricket 24",
+    "genre":"Sports",
+    "price": 49.99,
+    "releaseDate":"2024-11-18"
+}
+
+### Delete a game
+DELETE http://localhost:5101/games/1
