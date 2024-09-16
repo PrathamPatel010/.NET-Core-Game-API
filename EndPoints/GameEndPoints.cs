@@ -13,23 +13,25 @@ public static class GameEndPoints
     new (5, "Minecraft", "Sandbox", 26.95M, new DateOnly(2011, 11, 18))
     ];
 
-    public static WebApplication MapGameEndPoints(this WebApplication app)
+    public static RouteGroupBuilder MapGameEndPoints(this WebApplication app)
     {
+        var gameRoute = app.MapGroup("games");
+
         // GET /games
-        app.MapGet("/games", () =>
+        gameRoute.MapGet("/", () =>
         {
             return games;
         });
 
         // GET /games/1
-        app.MapGet("/games/{id}", (int id) =>
+        gameRoute.MapGet("/{id}", (int id) =>
         {
             GameDto? game = games.Find(game => game.Id == id);
             return game is null ? Results.NotFound() : Results.Ok(game);
         });
 
         // POST /games
-        app.MapPost("/games", (CreateGameDto newGameData) =>
+        gameRoute.MapPost("/", (CreateGameDto newGameData) =>
         {
             GameDto game = new(
                 games.Count + 1,
@@ -43,7 +45,7 @@ public static class GameEndPoints
         });
 
         // PUT /games/1
-        app.MapPut("/games/{id}", (int id, UpdateGameDto updatedGame) =>
+        gameRoute.MapPut("/{id}", (int id, UpdateGameDto updatedGame) =>
         {
             var index = games.FindIndex(game => game.Id == id);
 
@@ -63,7 +65,7 @@ public static class GameEndPoints
         });
 
         // DELETE /games/1
-        app.MapDelete("/games/{id}", (int id) =>
+        gameRoute.MapDelete("/{id}", (int id) =>
         {
             var index = games.FindIndex(game => game.Id == id);
             if (index == -1)
@@ -75,6 +77,6 @@ public static class GameEndPoints
             return Results.NoContent();
         });
 
-        return app;
+        return gameRoute;
     }
 }
